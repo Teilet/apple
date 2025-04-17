@@ -77,8 +77,8 @@ Tab:CreateButton({
       local player = Players.LocalPlayer
 
       local isActive = true
-      local pointA = Vector3.new(144, 4, -471)
-      local pointB = Vector3.new(-229, 4, -467)
+      local pointA = Vector3.new(-229, 4, -467)
+      local pointB = Vector3.new(144, 4, -471)
       local currentTarget = pointB
       local moveSpeed = 25
       local spinSpeed = 50
