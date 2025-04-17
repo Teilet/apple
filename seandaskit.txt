@@ -1,0 +1,143 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "SEAN",
+   LoadingTitle = "Really cool",
+   LoadingSubtitle = "by Skibidi Scripts",
+   ConfigurationSaving = {
+      Enabled = true,
+      FileName = "my Hub"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   KeySystem = false,
+})
+
+local Tab = Window:CreateTab("Really cool", 4483362458)
+local Section = Tab:CreateSection("farm")
+
+-- FUNCTION: Hold Balloon Sword & Tank
+local function autoHoldTools()
+   local Players = game:GetService("Players")
+   local player = Players.LocalPlayer
+   local toolNames = {"Balloon Sword", "Balloon Tank"}
+   local checkInterval = 0.1
+   local isLooping = true
+
+   local function autoEquipTools(character)
+      local backpack = player:WaitForChild("Backpack")
+      task.spawn(function()
+         while isLooping do
+            for _, toolName in ipairs(toolNames) do
+               local tool = backpack:FindFirstChild(toolName)
+               if tool and tool:IsA("Tool") then
+                  if not tool:IsDescendantOf(character) then
+                     tool.Parent = character
+                  end
+               end
+            end
+            wait(checkInterval)
+         end
+      end)
+   end
+
+   player.CharacterAdded:Connect(function(char)
+      wait(0.3)
+      autoEquipTools(char)
+   end)
+
+   if player.Character then
+      autoEquipTools(player.Character)
+   end
+end
+
+-- Nút 1: Cầm kiếm và tank
+Tab:CreateButton({
+   Name = "Hold sword and tank",
+   Callback = autoHoldTools
+})
+
+-- Nút 2: Infinite Yield
+Tab:CreateButton({
+   Name = "Infinite Yield FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+   end
+})
+
+-- Nút 3: Quay và di chuyển
+Tab:CreateButton({
+   Name = "move!",
+   Callback = function()
+      local Players = game:GetService("Players")
+      local RunService = game:GetService("RunService")
+      local player = Players.LocalPlayer
+
+      local isActive = true
+      local pointA = Vector3.new(144, 4, -471)
+      local pointB = Vector3.new(-229, 4, -467)
+      local currentTarget = pointB
+      local moveSpeed = 25
+      local spinSpeed = 50
+
+      local function setupMovementAndSpin(character)
+         local hrp = character:WaitForChild("HumanoidRootPart")
+         RunService.RenderStepped:Connect(function(dt)
+            if isActive and hrp then
+               local direction = (currentTarget - hrp.Position).Unit
+               local distance = (currentTarget - hrp.Position).Magnitude
+
+               if distance > 1 then
+                  local moveStep = direction * moveSpeed * dt
+                  hrp.CFrame = hrp.CFrame + moveStep
+               else
+                  currentTarget = (currentTarget == pointB) and pointA or pointB
+               end
+
+               local rx = math.random(-100, 100) / 100 * spinSpeed
+               local ry = math.random(-100, 100) / 100 * spinSpeed
+               local rz = math.random(-100, 100) / 100 * spinSpeed
+               hrp.CFrame = hrp.CFrame * CFrame.Angles(math.rad(rx), math.rad(ry), math.rad(rz))
+            end
+         end)
+      end
+
+      player.CharacterAdded:Connect(function(character)
+         character:WaitForChild("HumanoidRootPart")
+         wait(0.2)
+         setupMovementAndSpin(character)
+      end)
+
+      if player.Character then
+         setupMovementAndSpin(player.Character)
+      end
+   end
+})
+
+-- Nút 4: Thoát ghế
+Tab:CreateButton({
+   Name = "Escape stuck automatic",
+   Callback = function()
+      local Players = game:GetService("Players")
+      local player = Players.LocalPlayer
+      local checkInterval = 0.1
+
+      local function monitorSeatLoop()
+         while true do
+            local character = player.Character
+            if character then
+               local humanoid = character:FindFirstChildOfClass("Humanoid")
+               if humanoid and humanoid.Sit and humanoid.SeatPart then
+                  humanoid.Sit = false
+               end
+            end
+            wait(checkInterval)
+         end
+      end
+
+      task.spawn(monitorSeatLoop)
+   end
+})
