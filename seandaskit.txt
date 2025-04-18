@@ -20,39 +20,45 @@ local Tab = Window:CreateTab("Really cool", 4483362458)
 local Section = Tab:CreateSection("farm")
 
 -- FUNCTION: Hold Balloon Sword & Tank
-local function autoHoldTools()
-   local Players = game:GetService("Players")
-   local player = Players.LocalPlayer
-   local toolNames = {"Balloon Sword", "Balloon Tank"}
-   local checkInterval = 0.1
-   local isLooping = true
+-- LocalScript (đặt trong StarterPlayerScripts)
 
-   local function autoEquipTools(character)
-      local backpack = player:WaitForChild("Backpack")
-      task.spawn(function()
-         while isLooping do
-            for _, toolName in ipairs(toolNames) do
-               local tool = backpack:FindFirstChild(toolName)
-               if tool and tool:IsA("Tool") then
-                  if not tool:IsDescendantOf(character) then
-                     tool.Parent = character
-                  end
-               end
-            end
-            wait(checkInterval)
-         end
-      end)
-   end
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
-   player.CharacterAdded:Connect(function(char)
-      wait(0.3)
-      autoEquipTools(char)
-   end)
+local toolNames = {"Balloon Sword", "Balloon Tank", "M4A3E8"} -- 🔥 3 tool cần cầm
+local checkInterval = 0.1
+local isLooping = true
 
-   if player.Character then
-      autoEquipTools(player.Character)
-   end
+local function autoEquipTools(character)
+	local backpack = player:WaitForChild("Backpack")
+
+	task.spawn(function()
+		while isLooping do
+			for _, toolName in ipairs(toolNames) do
+				local tool = backpack:FindFirstChild(toolName)
+
+				if tool and tool:IsA("Tool") then
+					if not tool:IsDescendantOf(character) then
+						tool.Parent = character
+					end
+				end
+			end
+			wait(checkInterval)
+		end
+	end)
 end
+
+-- Khi nhân vật spawn lại
+player.CharacterAdded:Connect(function(char)
+	wait(0.3)
+	autoEquipTools(char)
+end)
+
+-- Nếu nhân vật đã tồn tại khi bắt đầu
+if player.Character then
+	autoEquipTools(player.Character)
+end
+
 
 -- Nút 1: Cầm kiếm và tank
 Tab:CreateButton({
